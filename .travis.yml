@@ -12,7 +12,7 @@ env:
     - PLATFORMIO_CI_SRC=Wand/Firmware/Accelerometer_Test/Accelerometer_Test.ino
     - PLATFORMIO_CI_SRC=Wand/Firmware/RGB_Led_Test/RGB_Led_Test.ino
     - PLATFORMIO_CI_SRC=Wand/Firmware/Thermocouple_Test/Thermocouple_Test.ino
-    - PLATFORMIO_CI_SRC=Wand/Firmware/Thermocouple_Test/Thermocouple_MAX6675_Test.ino
+    - PLATFORMIO_CI_SRC=Wand/Firmware/Thermocouple_MAX6675_Test/Thermocouple_MAX6675_Test.ino
 
 install:
     - pip install -U platformio
