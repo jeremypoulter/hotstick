@@ -12,6 +12,7 @@ env:
     - PLATFORMIO_CI_SRC=Wand/Firmware/Accelerometer_Test/Accelerometer_Test.ino
     - PLATFORMIO_CI_SRC=Wand/Firmware/RGB_Led_Test/RGB_Led_Test.ino
     - PLATFORMIO_CI_SRC=Wand/Firmware/Thermocouple_Test/Thermocouple_Test.ino
+    - PLATFORMIO_CI_SRC=Wand/Firmware/Thermocouple_Test/Thermocouple_MAX6675_Test.ino
 
 install:
     - pip install -U platformio
@@ -21,6 +22,12 @@ install:
     #
     # http://platformio.org/lib/show/11/I2Cdevlib-Core
     - platformio lib install 11
+    # http://platformio.org/lib/show/107/I2Cdevlib-MPU6050
+    - platformio lib install 107
+    # http://platformio.org/lib/show/84/Adafruit-MAX31885
+    - platformio lib install 84
+    # http://platformio.org/lib/show/558/Adafruit-MAX6675
+    - platformio lib install 558
 
 script:
     - platformio ci --board=uno
