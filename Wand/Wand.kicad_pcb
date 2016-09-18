@@ -294,6 +294,11 @@
       (net 18 /SCL))
     (pad 24 smd rect (at -1.25 -2 270) (size 0.35 0.8) (layers F.Signal.Cu F.Paste F.Mask)
       (net 17 /SDA))
+    (model Housings_DFN_QFN.3dshapes/QFN-24-1EP_4x4mm_Pitch0.5mm.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Wand:QFN-28-1EP_4x4mm_Pitch0.45mm (layer F.Signal.Cu) (tedit 56AB54E5) (tstamp 569F6AC2)
@@ -691,6 +696,11 @@
       (net 7 "Net-(D1-Pad3)"))
     (pad 4 smd rect (at 0.75 1.5) (size 1.1 1.5) (layers F.Signal.Cu F.Paste F.Mask)
       (net 8 "Net-(D1-Pad4)"))
+    (model LEDs.3dshapes/LED_PLCC_2835.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 0.45 0.35 0.5))
+      (rotate (xyz 0 0 90))
+    )
   )
 
   (module Wand:ISP_pads_2x3 (layer F.Signal.Cu) (tedit 56A7F289) (tstamp 569F6A5E)
@@ -751,7 +761,7 @@
     (tags "Diode SOD523")
     (path /56AA25F0)
     (attr smd)
-    (fp_text reference D2 (at -0.02 1.61) (layer F.SilkS)
+    (fp_text reference D2 (at 0.055 1.142) (layer F.SilkS)
       (effects (font (size 0.5 0.5) (thickness 0.125)))
     )
     (fp_text value MM5Z3V3T1G (at 0 1.7) (layer F.Fab)
@@ -763,6 +773,11 @@
       (net 2 GND))
     (pad 1 smd rect (at 0.7 0) (size 0.6 0.7) (layers F.Signal.Cu F.Paste F.Mask)
       (net 23 /HEAT_DETECT))
+    (model Diodes_SMD.3dshapes/SOD-323.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 0.6 0.7 0.6))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Capacitors_SMD:C_0402 (layer F.Signal.Cu) (tedit 57DEFF65) (tstamp 57D70DBD)
