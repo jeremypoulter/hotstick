@@ -40,8 +40,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "Hotstick Wand"
-Date "2016-01-20"
-Rev "1"
+Date "2016-09-18"
+Rev "2"
 Comp "rLab/Reading Hackspace"
 Comment1 ""
 Comment2 ""
