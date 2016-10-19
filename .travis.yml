@@ -9,11 +9,11 @@ cache:
         - "~/.platformio"
 
 env:
-    - PLATFORMIO_CI_SRC=Wand/Firmware/Accelerometer_Test/Accelerometer_Test.ino
-    - PLATFORMIO_CI_SRC=Wand/Firmware/RGB_Led_Test/RGB_Led_Test.ino
-    - PLATFORMIO_CI_SRC=Wand/Firmware/Thermocouple_Test/Thermocouple_Test.ino
-    - PLATFORMIO_CI_SRC=Wand/Firmware/Thermocouple_MAX6675_Test/Thermocouple_MAX6675_Test.ino
-    - PLATFORMIO_CI_SRC=Base/Firmware/Base_Firmware/src/main.cpp
+    - PLATFORMIO_CI_SRC=Wand/Firmware/Accelerometer_Test/Accelerometer_Test.ino PLATFORMIO_CI_EXTRA_ARGS="--board=uno"
+    - PLATFORMIO_CI_SRC=Wand/Firmware/RGB_Led_Test/RGB_Led_Test.ino PLATFORMIO_CI_EXTRA_ARGS="--board=uno"
+    - PLATFORMIO_CI_SRC=Wand/Firmware/Thermocouple_Test/Thermocouple_Test.ino PLATFORMIO_CI_EXTRA_ARGS="--board=uno"
+    - PLATFORMIO_CI_SRC=Wand/Firmware/Thermocouple_MAX6675_Test/Thermocouple_MAX6675_Test.ino PLATFORMIO_CI_EXTRA_ARGS="--board=uno"
+    - PLATFORMIO_CI_SRC=Base/Firmware/Base_Firmware PLATFORMIO_CI_EXTRA_ARGS="--board=mega"
 
 install:
     - pip install -U platformio
@@ -31,5 +31,5 @@ install:
     - platformio lib install 558
 
 script:
-    - platformio ci --board=uno
+    - platformio ci $PLATFORMIO_CI_EXTRA_ARGS
 
