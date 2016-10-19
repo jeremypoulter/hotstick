@@ -14,7 +14,8 @@
 
 #define JSON_BUFFER_SIZE 200
 
-int state = HIGH;
+// Heater state, HIGH is off, LOW is on
+int heaterState = HIGH;
 
 double temptip = 0.0;
 double tempint = 0.0;
@@ -33,7 +34,7 @@ void setup() {
   Serial1.begin(38400);
 
   pinMode(NOT_ENABLE_PIN, OUTPUT);
-  digitalWrite(NOT_ENABLE_PIN, HIGH);
+  digitalWrite(NOT_ENABLE_PIN, heaterState);
 }
 
 void loop()
@@ -86,7 +87,7 @@ void loop()
 
   if(millis() < messageTimeout)
   {
-    if(HIGH == state)
+    if(HIGH == heaterState)
     {
       // Heater is off
       // Turn on if the off timer has expired and the tip temp is lower than the
@@ -94,7 +95,7 @@ void loop()
       if(millis() > heaterOffTimeout && temptip < tempTarget)
       {
         digitalWrite(NOT_ENABLE_PIN, LOW);
-        state = LOW;
+        heaterState = LOW;
         heaterOnTimeout = millis() + HEATER_ON_TIME;
 
         Serial1.print("{\"led\":[0,255,0]}");
@@ -107,7 +108,7 @@ void loop()
       if(millis() > heaterOnTimeout || temptip >= tempTarget)
       {
         digitalWrite(NOT_ENABLE_PIN, HIGH);
-        state = HIGH;
+        heaterState = HIGH;
         heaterOffTimeout = millis() + HEATER_OFF_TIME;
         Serial1.print("{\"led\":[0,255,0]}");
       }
