@@ -12,6 +12,8 @@
 // Min time to leave the heater off for, to read the temp
 #define HEATER_OFF_TIME 10
 
+#define JSON_BUFFER_SIZE 200
+
 int state = HIGH;
 
 double temptip = 0.0;
@@ -39,16 +41,17 @@ void loop()
   // Read any message from the Wand
   if(Serial1.available())
   {
-    char start = Serial1.read();
+    char start = Serial1.peek();
     if('{' == start)
     {
-      String data = "{" + Serial1.readStringUntil('}');
+      char data[JSON_BUFFER_SIZE];
+      Serial1.readBytesUntil('}', data, JSON_BUFFER_SIZE);
 
       Serial.print("Got ");
       Serial.print(data);
       Serial.println(" from Wand");
 
-      StaticJsonBuffer<200> jsonBuffer;
+      StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
 
       JsonObject& msg = jsonBuffer.parseObject(data);
 
@@ -76,6 +79,8 @@ void loop()
       Serial.println(z);
 
       messageTimeout = millis() + COMMS_TIMEOUT;
+    } else {
+      Serial1.read();
     }
   }
 
@@ -91,6 +96,8 @@ void loop()
         digitalWrite(NOT_ENABLE_PIN, LOW);
         state = LOW;
         heaterOnTimeout = millis() + HEATER_ON_TIME;
+
+        Serial1.print("{\"led\":[0,255,0]}");
       }
     }
     else
@@ -102,6 +109,7 @@ void loop()
         digitalWrite(NOT_ENABLE_PIN, HIGH);
         state = HIGH;
         heaterOffTimeout = millis() + HEATER_OFF_TIME;
+        Serial1.print("{\"led\":[0,255,0]}");
       }
     }
   }
