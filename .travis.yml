@@ -13,6 +13,7 @@ env:
     - PLATFORMIO_CI_SRC=Wand/Firmware/RGB_Led_Test/RGB_Led_Test.ino PLATFORMIO_CI_EXTRA_ARGS="--board=uno"
     - PLATFORMIO_CI_SRC=Wand/Firmware/Thermocouple_Test/Thermocouple_Test.ino PLATFORMIO_CI_EXTRA_ARGS="--board=uno"
     - PLATFORMIO_CI_SRC=Wand/Firmware/Thermocouple_MAX6675_Test/Thermocouple_MAX6675_Test.ino PLATFORMIO_CI_EXTRA_ARGS="--board=uno"
+    - PLATFORMIO_CI_SRC=Wand/Firmware/Wand_Firmware PLATFORMIO_CI_EXTRA_ARGS="--project-conf=Wand/Firmware/Wand_Firmware/platformio.ini"
     - PLATFORMIO_CI_SRC=Base/Firmware/Base_Firmware PLATFORMIO_CI_EXTRA_ARGS="--project-conf=Base/Firmware/Base_Firmware/platformio.ini"
 
 install:
