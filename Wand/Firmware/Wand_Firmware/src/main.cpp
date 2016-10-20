@@ -135,6 +135,7 @@ void loop()
     state["z"] = z;
 
     state.printTo(Serial);
+    Serial.println("");
   }
 }
 
@@ -154,13 +155,17 @@ void led_setup()
 
 double readTempTip(double intTemp)
 {
-  if(HIGH == digitalRead(HEAT_DETECT_PIN) || tipTempValidAfter < millis()) {
+  if(HIGH == digitalRead(HEAT_DETECT_PIN) || tipTempValidAfter > millis()) {
     return TEMP_ERROR_HEATER_ON;
   }
 
-  int tempAdc = analogRead(TEMP_PIN);
+  double tempAdc = (double)analogRead(TEMP_PIN);
+  if(tempAdc >= 1022.9) {
+    return TEMP_ERROR_NO_TIP;
+  }
 
-  return intTemp + 16.22 + (double)tempAdc * 0.61;
+//  return intTemp + 16.22 + tempAdc * 0.61;
+  return 16.913 + (tempAdc * 0.61) + (-0.0002 * pow(tempAdc, 2));
 }
 
 double readTempInt()
