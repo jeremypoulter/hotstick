@@ -42,9 +42,18 @@ uint16_t packetSize;    // expected DMP packet size (default is 42 bytes)
 uint16_t fifoCount;     // count of all bytes currently in FIFO
 uint8_t fifoBuffer[64]; // FIFO storage buffer
 
+// orientation/motion vars
+Quaternion q;           // [w, x, y, z]         quaternion container
+VectorFloat gravity;    // [x, y, z]            gravity vector
+float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
+
 unsigned long sendStateTimeout = 0;
 unsigned long tipTempValidAfter = 0;
 int lastHeatState = LOW;
+
+double yaw = 0.0;
+double pitch = 0.0;
+double roll = 0.0;
 
 // Temperature related functions
 double readTempInt();
@@ -52,6 +61,7 @@ double readTempTip(double tempInt);
 
 // MPU/DMP related stuff
 void mpu_setup();
+void mpu_read();
 void dmpDataReady();
 
 // LED control
@@ -78,6 +88,9 @@ void setup()
 
 void loop()
 {
+  // Read the MPU
+  mpu_read();
+
   // Has the state of the Heat detect pin changed
   int heatState = digitalRead(HEAT_DETECT_PIN);
   if(lastHeatState != heatState) {
@@ -123,16 +136,13 @@ void loop()
     // Read the temp
     double tempint = readTempInt();
     double temptip = readTempTip(tempint);
-    double x = 0.0;
-    double y = 0.0;
-    double z = 0.0;
 
     JsonObject& state = jsonBuffer.createObject();
     state["temptip"] = temptip;
     state["tempint"] = tempint;
-    state["x"] = x;
-    state["y"] = y;
-    state["z"] = z;
+    state["yaw"] = yaw;
+    state["pitch"] = pitch;
+    state["roll"] = roll;
 
     state.printTo(Serial);
     Serial.println("");
@@ -170,7 +180,8 @@ double readTempTip(double intTemp)
 
 double readTempInt()
 {
-  return 22.0;
+  int16_t rawTemp = mpu.getTemperature();
+  return (rawTemp/340.)+36.53;
 }
 
 void dmpDataReady() {
@@ -232,4 +243,58 @@ void mpu_setup()
     Serial.print(devStatus);
     Serial.println(F(")"));
   }
+}
+
+void mpu_read()
+{
+    // if programming failed, don't try to do anything
+    if (!dmpReady) return;
+
+    // wait for MPU interrupt or extra packet(s) available
+    while (!mpuInterrupt && fifoCount < packetSize) {
+        // other program behavior stuff here
+        // .
+        // .
+        // .
+        // if you are really paranoid you can frequently test in between other
+        // stuff to see if mpuInterrupt is true, and if so, "break;" from the
+        // while() loop to immediately process the MPU data
+        // .
+        // .
+        // .
+    }
+
+    // reset interrupt flag and get INT_STATUS byte
+    mpuInterrupt = false;
+    mpuIntStatus = mpu.getIntStatus();
+
+    // get current FIFO count
+    fifoCount = mpu.getFIFOCount();
+
+    // check for overflow (this should never happen unless our code is too inefficient)
+    if ((mpuIntStatus & 0x10) || fifoCount == 1024) {
+        // reset so we can continue cleanly
+        mpu.resetFIFO();
+        Serial.println(F("FIFO overflow!"));
+
+    // otherwise, check for DMP data ready interrupt (this should happen frequently)
+    } else if (mpuIntStatus & 0x02) {
+        // wait for correct available data length, should be a VERY short wait
+        while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
+
+        // read a packet from FIFO
+        mpu.getFIFOBytes(fifoBuffer, packetSize);
+
+        // track FIFO count here in case there is > 1 packet available
+        // (this lets us immediately read more without waiting for an interrupt)
+        fifoCount -= packetSize;
+
+        // display Euler angles in degrees
+        mpu.dmpGetQuaternion(&q, fifoBuffer);
+        mpu.dmpGetGravity(&gravity, &q);
+        mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
+        yaw = (ypr[0] * 180/M_PI);
+        pitch = (ypr[1] * 180/M_PI);
+        roll = (ypr[2] * 180/M_PI);
+    }
 }
