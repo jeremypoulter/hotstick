@@ -105,19 +105,23 @@ void loop()
     if('{' == start)
     {
       char data[JSON_BUFFER_SIZE];
-      Serial.readBytesUntil('}', data, JSON_BUFFER_SIZE);
+      int read = Serial.readBytesUntil('}', data, JSON_BUFFER_SIZE);
+      if(read + 2 < JSON_BUFFER_SIZE)
+      {
+        data[read++] = '}';
+        data[read++] = '\0';
+        Serial.print(F("Got "));
+        Serial.print(data);
+        Serial.println(F(" from Base"));
 
-      Serial.print(F("Got "));
-      Serial.print(data);
-      Serial.println(F(" from Base"));
+        StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
 
-      StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
+        JsonObject& msg = jsonBuffer.parseObject(data);
 
-      JsonObject& msg = jsonBuffer.parseObject(data);
-
-      // Check to see if we got an LED message
-      if(msg["led"].success()) {
-        led(msg["led"][0], msg["led"][1], msg["led"][2]);
+        // Check to see if we got an LED message
+        if(msg["led"].success()) {
+          led(msg["led"][0], msg["led"][1], msg["led"][2]);
+        }
       }
     } else {
       Serial.read();
