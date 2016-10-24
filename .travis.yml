@@ -30,6 +30,9 @@ install:
     - platformio lib install 84
     # http://platformio.org/lib/show/558/Adafruit-MAX6675
     - platformio lib install 558
+	
+	- mkdir -p ~/.platformio/boards
+	- cp $TRAVIS_BUILD_DIR/Wand/Firmware/wand*.json ~/.platformio/boards
 
 script:
     - platformio ci $PLATFORMIO_CI_EXTRA_ARGS
