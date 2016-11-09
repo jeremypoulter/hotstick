@@ -2,20 +2,22 @@
 #include <ArduinoJson.h>
 
 #define NOT_ENABLE_PIN  2
+#define HEATER_ON       LOW
+#define HEATER_OFF      HIGH
 
 // If we don't receive a message in an ammount of time go to a fail safe mode
 #define COMMS_TIMEOUT   200
 
 // The max tme to leave the heater on for
-#define HEATER_ON_TIME  100
+#define HEATER_ON_TIME  500
 
 // Min time to leave the heater off for, to read the temp
-#define HEATER_OFF_TIME 10
+#define HEATER_OFF_TIME 100
 
 #define JSON_BUFFER_SIZE 200
 
 // Heater state, HIGH is off, LOW is on
-int heaterState = HIGH;
+int heaterState = HEATER_OFF;
 
 double temptip = 0.0;
 double tempint = 0.0;
@@ -79,7 +81,7 @@ void loop()
           yaw = msg["yaw"];
           pitch = msg["pitch"];
           roll = msg["roll"];
-  
+
 /*
           Serial.print("temptip = ");
           Serial.print(temptip);
@@ -104,7 +106,9 @@ void loop()
           Serial.print(",");
           Serial.print(pitch);
           Serial.print(",");
-          Serial.println(roll);
+          Serial.print(roll);
+          Serial.print(",");
+          Serial.println(heaterState);
 
           messageTimeout = millis() + COMMS_TIMEOUT;
         }
@@ -118,7 +122,7 @@ void loop()
 
   if(millis() < messageTimeout)
   {
-    if(HIGH == heaterState)
+    if(HEATER_OFF == heaterState)
     {
       // Heater is off
 
@@ -130,8 +134,8 @@ void loop()
       }
       else if(millis() > heaterOffTimeout)
       {
-        digitalWrite(NOT_ENABLE_PIN, LOW);
-        heaterState = LOW;
+        heaterState = HEATER_ON;
+        digitalWrite(NOT_ENABLE_PIN, heaterState);
         heaterOnTimeout = millis() + HEATER_ON_TIME;
 
         Serial1.print("{\"led\":[255,0,0]}");
@@ -144,8 +148,8 @@ void loop()
       // Turn it off if the on timer has expired or the target temp has been reached
       if(millis() > heaterOnTimeout || temptip >= tempTarget)
       {
-        digitalWrite(NOT_ENABLE_PIN, HIGH);
-        heaterState = HIGH;
+        heaterState = HEATER_OFF;
+        digitalWrite(NOT_ENABLE_PIN, heaterState);
         heaterOffTimeout = millis() + HEATER_OFF_TIME;
         Serial1.print("{\"led\":[0,0,255]}");
       }
@@ -154,7 +158,7 @@ void loop()
   else
   {
     // No data from Wand, make sure the heater is off
-    digitalWrite(NOT_ENABLE_PIN, HIGH);
-    heaterState = HIGH;
+    heaterState = HEATER_OFF;
+    digitalWrite(NOT_ENABLE_PIN, heaterState);
   }
 }
